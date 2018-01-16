@@ -157,7 +157,7 @@ ol.source.ImageSpectrumSpatial.prototype.getImageInternal = function(extent, res
       projection, params);
 
 
-  if (!params['mapName']) {
+  if (postData) {
 
     this.image_ = new ol.Image(requestExtent, resolution, pixelRatio,
         JSON.stringify({
