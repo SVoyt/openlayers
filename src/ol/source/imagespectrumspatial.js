@@ -160,20 +160,21 @@ ol.source.ImageSpectrumSpatial.prototype.getImageInternal = function(extent, res
   if (!params['mapName']) {
 
     this.image_ = new ol.Image(requestExtent, resolution, pixelRatio,
-        {
+        JSON.stringify({
           method: 'POST',
           data: JSON.stringify(postData),
           url: url,
           imageType: params['imageType']
-        }, this.crossOrigin_,
+        }), this.crossOrigin_,
         function(image, src) {
+          src = JSON.parse(src);
           var xhr = new XMLHttpRequest();
           xhr.open('POST', src.url, true);
           xhr.setRequestHeader('Content-type', 'application/json');
           xhr.responseType = 'arraybuffer';
           xhr.onload = function(oEvent) {
-
-            var uInt8Array = new Uint8Array(/** @type {ArrayBuffer} */ xhr.response);
+            var  respArrayBuff = /** @type {ArrayBuffer} */ (xhr.response);
+            var uInt8Array = new Uint8Array(respArrayBuff);
             var i = uInt8Array.length;
             var binaryString = new Array(i);
             while (i--) {
@@ -181,7 +182,7 @@ ol.source.ImageSpectrumSpatial.prototype.getImageInternal = function(extent, res
             }
             var data = binaryString.join('');
 
-            var base64 = 'data:image/' + src.imageType + ';base64,' + window.btoa(data);
+            var base64 = 'data:image/' + /** @type {String} */ (src.imageType) + ';base64,' + window.btoa(data);
             image.getImage().src = base64;
           };
 
